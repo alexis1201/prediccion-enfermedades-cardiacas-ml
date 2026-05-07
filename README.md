@@ -107,8 +107,10 @@ jupyter notebook notebook/proyecto_ML_heart_disease_V5.ipynb
 
 ## 👥 Autores
 
-Jesús Martínez Romero | 202243496 |
-Alexis Miguel Ramos Flores | 202249357 |
+| Nombre | Matrícula |
+|---|---|
+| Jesús Martínez Romero | 202243496 |
+| Alexis Miguel Ramos Flores | 202249357 |
 
 ISTII — Generación 2022
 
