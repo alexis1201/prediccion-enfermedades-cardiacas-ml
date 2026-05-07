@@ -1,67 +1,125 @@
-# CodeIgniter 4 Application Starter
+# 🫀 Predicción de Enfermedades Cardíacas — Machine Learning
 
-## What is CodeIgniter?
+> Proyecto Final de Aprendizaje Automático · ISTII Generación 2022
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.x-orange?logo=scikit-learn)](https://scikit-learn.org)
+[![CodeIgniter](https://img.shields.io/badge/CodeIgniter-4-red?logo=codeigniter)](https://codeigniter.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+Aplicación de Machine Learning para apoyar el diagnóstico de enfermedades cardíacas a partir de variables clínicas. Desarrollado como proyecto final del curso de Aprendizaje Automático.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+🌐 **Demo en vivo:** [https://proyecto-final-ap.wuaze.com/public/](https://proyecto-final-ap.wuaze.com/public/)
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+---
 
-## Installation & updates
+## 📌 Descripción
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+Se entrenaron y compararon tres algoritmos de clasificación sobre el [Heart Disease Dataset (Kaggle)](https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset) para predecir la presencia de enfermedad cardíaca en pacientes. El mejor modelo (KNN k=11) fue integrado en una aplicación web con CodeIgniter 4.
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+---
 
-## Setup
+## 🗂️ Estructura del proyecto
+heart-disease-ml-predictor/
+├── notebook/
+│   └── proyecto_ML_heart_disease_V5.ipynb   # Notebook principal (Google Colab)
+├── modelo/
+│   └── modelo_knn_cardio.pkl                # Modelo + scaler exportados
+├── app/                                     # Aplicación CodeIgniter 4
+│   ├── Controllers/
+│   ├── Models/
+│   └── Views/
+├── assets/
+│   └── img/                                 # Capturas de la app y gráficas
+├── reporte/
+│   └── Reporte_Avance_S1_S2_S3_S4_S5.pdf
+└── README.md
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+---
 
-## Important Change with index.php
+## 📊 Dataset
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+| Campo | Detalle |
+|---|---|
+| Nombre | Heart Disease Dataset |
+| Fuente | [Kaggle](https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset) |
+| Instancias | 1,025 originales → 302 tras limpieza |
+| Atributos | 14 (13 predictores + 1 objetivo) |
+| Origen | Cleveland Clinic, Hungarian Institute, Long Beach VA, Univ. Zúrich |
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+---
 
-**Please** read the user guide for a better explanation of how CI4 works!
+## ⚙️ Pipeline de Machine Learning
+Dataset → Limpieza (eliminación de 723 duplicados)
+→ EDA (histogramas, correlaciones, boxplots)
+→ Normalización Min-Max (5 variables continuas)
+→ Selección de características (ANOVA + Random Forest → 9 features)
+→ Entrenamiento con CV-10 estratificada
+→ Evaluación y comparación de modelos
+→ Exportación pickle → Deploy en CodeIgniter 4
 
-## Repository Management
+### Características seleccionadas (9)
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+`cp` · `thalach` · `oldpeak` · `ca` · `thal` · `exang` · `age` · `slope` · `trestbps`
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+---
 
-## Server Requirements
+## 🤖 Resultados de modelos
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+| Modelo | Accuracy | Precision | Recall | F1-Score |
+|---|---|---|---|---|
+| Baseline (ZeroR) | 0.543 | 0.543 | 1.000 | 0.704 |
+| Árbol de Decisión (depth=3) | 0.789 | 0.773 | 0.868 | 0.815 |
+| **KNN (k=11)** ⭐ | **0.834** | **0.813** | **0.916** | **0.858** |
+| SVM (rbf, C=10) | 0.834 | 0.819 | 0.904 | 0.856 |
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+> Validación cruzada estratificada de 10 dobleces (StratifiedKFold, random_state=42)
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+**★ Mejor modelo: KNN k=11** — Mayor F1-Score (0.858) y Recall (0.916), minimizando falsos negativos en contexto clínico.
 
+---
+
+## 🌐 Aplicación Web (CodeIgniter 4)
+
+La aplicación permite ingresar datos clínicos de un paciente y obtener una predicción en tiempo real:
+
+- Sliders para variables continuas (edad, presión arterial, FC máxima, depresión ST)
+- Dropdowns para variables categóricas (tipo de dolor, talasemia, vasos, angina, pendiente ST)
+- Resultado con diagnóstico estimado y probabilidad de confianza
+- 3 casos de prueba predefinidos (bajo riesgo, alto riesgo, caso límite)
+
+---
+
+## 🚀 Instalación local (Notebook)
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/TU_USUARIO/heart-disease-ml-predictor.git
+cd heart-disease-ml-predictor
+
+# Instalar dependencias
+pip install pandas numpy scikit-learn matplotlib seaborn ipywidgets
+
+# Abrir el notebook
+jupyter notebook notebook/proyecto_ML_heart_disease_V5.ipynb
+```
+
+---
+
+## 👥 Autores
+
+| Nombre | Matrícula |
+|---|---|
+| Jesús Martínez Romero | 202243496 |
+| Alexis Miguel Ramos Flores | 202249357 |
+
+ISTII — Generación 2022
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
 Additionally, make sure that the following extensions are enabled in your PHP:
 
 - json (enabled by default - don't turn it off)
