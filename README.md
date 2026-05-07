@@ -20,3 +20,17 @@ Se entrenaron y compararon tres algoritmos de clasificación sobre el [Heart Dis
 ---
 
 ## 🗂️ Estructura del proyecto
+heart-disease-ml-predictor/
+├── notebook/
+│   └── proyecto_ML_heart_disease_V5.ipynb   # Notebook principal (Google Colab)
+├── modelo/
+│   └── modelo_knn_cardio.pkl                # Modelo + scaler exportados
+├── app/                                     # Aplicación CodeIgniter 4
+│   ├── Controllers/
+│   ├── Models/
+│   └── Views/
+├── assets/
+│   └── img/                                 # Capturas de la app y gráficas
+├── reporte/
+│   └── Reporte_Avance_S1_S2_S3_S4_S5.pdf
+└── README.md
